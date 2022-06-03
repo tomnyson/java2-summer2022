@@ -5,11 +5,14 @@
  */
 package com.itgo.teachjava2;
 
+import java.io.Serializable;
+
 /**
  *
  * @author tomnyson
  */
-public class SinhVien {
+public class SinhVien implements Serializable {
+
     private String massv;
     private String ten;
     private String nganh;
@@ -59,12 +62,19 @@ public class SinhVien {
         this.dtb = dtb;
     }
 
-    public boolean isGioitinh() {
+    public boolean getGioitinh() {
         return gioitinh;
     }
 
     public void setGioitinh(boolean gioitinh) {
         this.gioitinh = gioitinh;
     }
-    
+
+    @Override
+    public String toString() {
+        return "SinhVien{" + "massv=" + massv + ", ten=" + ten + ", nganh=" + nganh + ", dtb=" + dtb + ", gioitinh=" + gioitinh + '}';
+    }
+
+  
+
 }
