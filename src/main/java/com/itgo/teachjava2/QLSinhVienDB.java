@@ -111,19 +111,19 @@ public class QLSinhVienDB {
 
     public boolean capNhatSinhVien(SinhVien sv) {
         try {
-            for (int i = 0; i < listSinhVien.size(); i++) {
-                if (listSinhVien.get(i).getMassv().equals(sv.getMassv())) {
-                    listSinhVien.set(i, sv);
-                    return true;
-                }
+           Connection connect = getSqlConnection(); 
+            String sql = "update sinhviens set tensv=?, nganh=?,"
+                    + " diemtb=?, gioitinh=? where masv=? ";
+            PreparedStatement prst = connect.prepareStatement(sql);
+            prst.setString(1, sv.getTen());
+            prst.setString(2, sv.getNganh());
+            prst.setDouble(3, sv.getDtb());
+            prst.setBoolean(4, sv.getGioitinh());
+            prst.setString(5, sv.getMassv());
+            int result = prst.executeUpdate();
+            if (result > 0) {
+                return true;
             }
-// nâng cao
-//            int index = listSinhVien.indexOf(sv);
-//            if (index != -1) {
-//                listSinhVien.set(index, sv);
-//            }
-//               boolean isExist = listSinhVien.contains(sv);
-
         } catch (Exception e) {
             e.printStackTrace();
             return false;

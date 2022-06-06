@@ -47,15 +47,15 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         loadCbNganh();
         LoadSinhVien();
         setLocationRelativeTo(null);
-        
+
     }
 
     public void loadAuthencation(Account account) {
-            if (account.getRole().equals("user")) {
-                btnThem1.setEnabled(false);
-                btnCapNhat.setEnabled(false);
-                ButtonDelete.setEnabled(false);
-            }
+        if (account.getRole().equals("user")) {
+            btnThem1.setEnabled(false);
+            btnCapNhat.setEnabled(false);
+            ButtonDelete.setEnabled(false);
+        }
 
     }
 
@@ -372,10 +372,12 @@ public class frmQLSinhVien extends javax.swing.JFrame {
             SinhVien sv = new SinhVien(massv, ten, nganh, dtb, gioiTinh);
 
             // add sv vao list
-            qlSinhVien.addSinhVien(sv);
+            boolean kt = qlSinhVien.addSinhVien(sv);
+            if (kt) {
+                LoadSinhVien();
+                JOptionPane.showMessageDialog(null, "Thêm thành ");
+            }
             // load lai table
-            LoadSinhVien();
-            JOptionPane.showMessageDialog(null, "Thêm thành ");
 
         } else {
             JOptionPane.showMessageDialog(null, "Dữ liệu không để trống");
@@ -422,25 +424,31 @@ public class frmQLSinhVien extends javax.swing.JFrame {
 
     private void ButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonDeleteActionPerformed
         // TODO add your handling code here:null
-        qlSinhVien.delete(lbKetQua.getText());
-        LoadSinhVien();
-        JOptionPane.showMessageDialog(this, "Xoá thành công !!");
+        boolean kq = qlSinhVien.delete(lbKetQua.getText());
+        if (kq) {
+            LoadSinhVien();
+            JOptionPane.showMessageDialog(this, "Xoá thành công !!");
+        }
+
     }//GEN-LAST:event_ButtonDeleteActionPerformed
 
     private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
         // TODO add your handling code here:
 
         int indexRow = tbSinhVien.getSelectedRow();
-        ArrayList<SinhVien> listSV = qlSinhVien.getListSinhVien();
+        ArrayList<SinhVien> listSV = qlSinhVien.loadSinhVien();
         listSV.get(indexRow).setMassv(txtMSSV.getText());
         listSV.get(indexRow).setTen(txtName.getText());
         listSV.get(indexRow).setDtb(Double.parseDouble(txtDTB.getText()));
         listSV.get(indexRow).setGioitinh((rbNam.isSelected()) ? true : false);
         listSV.get(indexRow).setNganh(cbNganh.getSelectedItem().toString());
 
-        JOptionPane.showMessageDialog(null, "đã sữa !");
-
-        LoadSinhVien();
+        boolean kt = qlSinhVien.capNhatSinhVien(listSV.get(indexRow));
+        if (kt) {
+            LoadSinhVien();
+            JOptionPane.showMessageDialog(null, "cập nhật thành  công");
+            LoadSinhVien();
+        }
 
 
     }//GEN-LAST:event_btnCapNhatActionPerformed

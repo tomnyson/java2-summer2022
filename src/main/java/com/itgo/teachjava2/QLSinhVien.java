@@ -5,6 +5,7 @@
  */
 package com.itgo.teachjava2;
 
+import static com.itgo.teachjava2.QLSinhVienDB.getSqlConnection;
 import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -91,25 +92,21 @@ public class QLSinhVien {
         return list;
     }
 
-    public void addSinhVien(SinhVien sv) {
-        listSinhVien.add(sv);
-    }
-
-    public boolean capNhatSinhVien(SinhVien sv) {
+    public boolean addSinhVien(SinhVien sv) {
         try {
-            for (int i = 0; i < listSinhVien.size(); i++) {
-                if (listSinhVien.get(i).getMassv().equals(sv.getMassv())) {
-                    listSinhVien.set(i, sv);
-                    return true;
-                }
+            Connection connect = getConnection();
+            String sql = "insert into sinhviens(masv, tensv, nganh, diemTb, gioitinh)"
+                    + "values(?, ?, ?, ?, ?)";
+            PreparedStatement stm = connect.prepareStatement(sql);
+            stm.setString(1, sv.getMassv());
+            stm.setString(2, sv.getTen());
+            stm.setString(3, sv.getNganh());
+            stm.setDouble(4, sv.getDtb());
+            stm.setBoolean(5, sv.getGioitinh());
+            int ketqua = stm.executeUpdate();
+            if (ketqua > 0) {
+                return true;
             }
-// nâng cao
-//            int index = listSinhVien.indexOf(sv);
-//            if (index != -1) {
-//                listSinhVien.set(index, sv);
-//            }
-//               boolean isExist = listSinhVien.contains(sv);
-
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -117,12 +114,40 @@ public class QLSinhVien {
         return false;
     }
 
-    public void delete(String txtMssv) {
-        for (SinhVien sinhVien : listSinhVien) {
-            if (sinhVien.getMassv().equals(txtMssv)) {
-                listSinhVien.remove(sinhVien);
-                break;
+    public boolean capNhatSinhVien(SinhVien sv) {
+        try {
+            Connection connect = getSqlConnection();
+            String sql = "update sinhviens set tensv=?, nganh=?,"
+                    + " diemtb=?, gioitinh=? where masv=? ";
+            PreparedStatement prst = connect.prepareStatement(sql);
+            prst.setString(1, sv.getTen());
+            prst.setString(2, sv.getNganh());
+            prst.setDouble(3, sv.getDtb());
+            prst.setBoolean(4, sv.getGioitinh());
+            prst.setString(5, sv.getMassv());
+            int result = prst.executeUpdate();
+            if (result > 0) {
+                return true;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
+        return false;
+    }
+
+    public boolean delete(String txtMssv) {
+        try {
+            Connection connect = getSqlConnection();
+            String sql = "delete from sinhviens where masv=?";
+            PreparedStatement prst = connect.prepareStatement(sql);
+            prst.setString(1, txtMssv);
+            int result = prst.executeUpdate();
+            if (result > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+        }
+        return false;
     }
 }
