@@ -5,6 +5,7 @@
  */
 package com.itgo.teachjava2;
 
+import dto.Nganh;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -70,7 +71,7 @@ public class QLSinhVienDB {
                 PreparedStatement prst = connect.prepareStatement(sql);
                 ResultSet result = prst.executeQuery();
                 while (result.next()) {
-                    System.err.println("go here" + result.getString("masv"));   
+                    System.err.println("go here" + result.getString("masv"));
                     SinhVien sv = new SinhVien();
                     sv.setMassv(result.getString("masv"));
                     sv.setTen(result.getString("tensv"));
@@ -85,6 +86,29 @@ public class QLSinhVienDB {
         } catch (Exception e) {
             e.printStackTrace();
             return listSinhVien;
+        }
+    }
+
+    public ArrayList<Nganh> getCategoryList() {
+        try {
+            ArrayList<Nganh> catList = new ArrayList<>();
+            Connection connect = getSqlConnection();
+            String sql = "select * from nganhs";
+            if (connect != null) {
+                PreparedStatement prst = connect.prepareStatement(sql);
+                ResultSet result = prst.executeQuery();
+                while (result.next()) {
+                    Nganh sv = new Nganh();
+                    sv.setId(result.getInt("id"));
+                    sv.setName(result.getString("name"));
+                    catList.add(sv);
+                }
+            }
+
+            return catList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -111,7 +135,7 @@ public class QLSinhVienDB {
 
     public boolean capNhatSinhVien(SinhVien sv) {
         try {
-           Connection connect = getSqlConnection(); 
+            Connection connect = getSqlConnection();
             String sql = "update sinhviens set tensv=?, nganh=?,"
                     + " diemtb=?, gioitinh=? where masv=? ";
             PreparedStatement prst = connect.prepareStatement(sql);

@@ -6,6 +6,7 @@
 package com.itgo.teachjava2;
 
 import dto.Account;
+import dto.Nganh;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
@@ -69,27 +70,40 @@ public class frmQLSinhVien extends javax.swing.JFrame {
     }
 
     public void loadCbNganh() {
-        String[] arrNganh = {"CNTT", "Đồ Hoà", "Kinh Tế", "Marketing"};
-        DefaultComboBoxModel model = new DefaultComboBoxModel(arrNganh);
+//        String[] arrNganh = {"CNTT", "Đồ Hoà", "Kinh Tế", "Marketing"};
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        ArrayList<Nganh> listNganh = qlSinhVien.loadNganh();
+        for (Nganh nganh : listNganh) {
+            model.addElement(nganh);
+        }
         cbNganh.setModel(model);
     }
 
     public void LoadSinhVien() {
-        String[] headerTable = {"MSSV", "Tên", "Ngành", "ĐTB", "Giới tính"};
+        try {
+           String[] headerTable = {"MSSV", "Tên", "Ngành", "ĐTB", "Giới tính"};
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(headerTable);
         ArrayList<SinhVien> listSV = qlSinhVien.loadSinhVien();
-        for (int i = 0; i < listSV.size(); i++) {
-            model.addRow(new Object[]{
-                listSV.get(i).getMassv(),
-                listSV.get(i).getTen(),
-                listSV.get(i).getNganh(),
-                listSV.get(i).getDtb(),
-                listSV.get(i).getGioitinh() ? "Nam" : "Nữ"
-            });
+        System.out.println("size"+ listSV.size());
+        if (listSV != null) {
+            for (int i = 0; i < listSV.size(); i++) {
+                model.addRow(new Object[]{
+                    listSV.get(i).getMassv(),
+                    listSV.get(i).getTen(),
+                    listSV.get(i).getTenNganh(),
+                    listSV.get(i).getDtb(),
+                    listSV.get(i).getGioitinh() ? "Nam" : "Nữ"
+                });
+            }
+            tbSinhVien.setModel(model);
+        } 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        
 
-        tbSinhVien.setModel(model);
+        
     }
 
     public void ButtonDelete() {
@@ -360,7 +374,9 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 || !txtName.getText().equals("")) {
             String massv = txtMSSV.getText();
             String ten = txtName.getText();
-            String nganh = (String) cbNganh.getSelectedItem();
+//            String nganh = (String) cbNganh.getSelectedItem();
+            Nganh nganh = (Nganh) cbNganh.getSelectedItem();
+            System.out.println("id" + nganh.getId());
             double dtb = Double.parseDouble(txtDTB.getText());
             boolean gioiTinh = false; // false nữ
 //            boolean gioiTinh = rbNam.isSelected() ? true : false;
@@ -369,7 +385,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
             }
 
             // tao sv
-            SinhVien sv = new SinhVien(massv, ten, nganh, dtb, gioiTinh);
+            SinhVien sv = new SinhVien(massv, ten, nganh.getId(), dtb, gioiTinh);
 
             // add sv vao list
             boolean kt = qlSinhVien.addSinhVien(sv);
@@ -441,7 +457,8 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         listSV.get(indexRow).setTen(txtName.getText());
         listSV.get(indexRow).setDtb(Double.parseDouble(txtDTB.getText()));
         listSV.get(indexRow).setGioitinh((rbNam.isSelected()) ? true : false);
-        listSV.get(indexRow).setNganh(cbNganh.getSelectedItem().toString());
+        Nganh nganh = (Nganh) cbNganh.getSelectedItem();
+        listSV.get(indexRow).setNganh(nganh.getId());
 
         boolean kt = qlSinhVien.capNhatSinhVien(listSV.get(indexRow));
         if (kt) {

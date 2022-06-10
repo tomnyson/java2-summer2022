@@ -6,6 +6,7 @@
 package com.itgo.teachjava2;
 
 import static com.itgo.teachjava2.QLSinhVienDB.getSqlConnection;
+import dto.Nganh;
 import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -54,9 +55,6 @@ public class QLSinhVien {
     public QLSinhVien() {
         Connection connect = getConnection();
         this.listSinhVien = new ArrayList<>();
-        listSinhVien.add(new SinhVien("sv01", "Sinh viên A", "CNTT", 7.5, true));
-        listSinhVien.add(new SinhVien("sv02", "Sinh viên B", "CNTT", 4.5, true));
-        listSinhVien.add(new SinhVien("sv03", "Sinh viên C", "CNTT", 8.5, false));
     }
 
     public ArrayList<SinhVien> getListSinhVien() {
@@ -68,18 +66,20 @@ public class QLSinhVien {
         try {
             Connection connect = getConnection();
             //sql query
-            String sql = "select * from sinhviens";
+            String sql = "select * from sinhviens sv inner join nganhs ng on sv.nganhId = ng.id";
             // stament connect
             PreparedStatement stm = connect.prepareStatement(sql);
             // function trả về một list dữ liệu
             ResultSet rst = stm.executeQuery();
             // kiểm tra xem có dữ liệu hay ko?
             while (rst.next()) {
+                System.out.println("sv"+ rst.getString("name"));
                 // add vào list theo kiểu sinhvien
                 SinhVien sv = new SinhVien();
                 sv.setMassv(rst.getString("masv"));
                 sv.setTen(rst.getString("tensv"));
-                sv.setNganh(rst.getString("nganh"));
+                sv.setNganh(rst.getInt("nganhId"));
+                sv.setTenNganh(rst.getString("name"));
                 sv.setDtb(rst.getDouble("diemTb"));
                 sv.setGioitinh(rst.getBoolean("gioitinh"));
                 list.add(sv);
@@ -91,16 +91,45 @@ public class QLSinhVien {
 
         return list;
     }
+    
+     public ArrayList<Nganh> loadNganh() {
+        ArrayList<Nganh> list = new ArrayList<Nganh>();
+        try {
+            Connection connect = getConnection();
+            //sql query
+            String sql = "select * from nganhs";
+            // stament connect
+            PreparedStatement stm = connect.prepareStatement(sql);
+            // function trả về một list dữ liệu
+            ResultSet rst = stm.executeQuery();
+            // kiểm tra xem có dữ liệu hay ko?
+            while (rst.next()) {
+                // add vào list theo kiểu sinhvien
+                Nganh sv = new Nganh();
+                sv.setId(rst.getInt("id"));
+                sv.setName(rst.getString("name"));
+                list.add(sv);
+            }
+            // tat connect
+            connect.close();
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    
 
     public boolean addSinhVien(SinhVien sv) {
         try {
             Connection connect = getConnection();
-            String sql = "insert into sinhviens(masv, tensv, nganh, diemTb, gioitinh)"
+            String sql = "insert into sinhviens(masv, tensv, nganhId, diemTb, gioitinh)"
                     + "values(?, ?, ?, ?, ?)";
             PreparedStatement stm = connect.prepareStatement(sql);
             stm.setString(1, sv.getMassv());
             stm.setString(2, sv.getTen());
-            stm.setString(3, sv.getNganh());
+            stm.setInt(3, sv.getNganh());
             stm.setDouble(4, sv.getDtb());
             stm.setBoolean(5, sv.getGioitinh());
             int ketqua = stm.executeUpdate();
@@ -117,11 +146,11 @@ public class QLSinhVien {
     public boolean capNhatSinhVien(SinhVien sv) {
         try {
             Connection connect = getSqlConnection();
-            String sql = "update sinhviens set tensv=?, nganh=?,"
+            String sql = "update sinhviens set tensv=?, nganhId=?,"
                     + " diemtb=?, gioitinh=? where masv=? ";
             PreparedStatement prst = connect.prepareStatement(sql);
             prst.setString(1, sv.getTen());
-            prst.setString(2, sv.getNganh());
+            prst.setInt(2, sv.getNganh());
             prst.setDouble(3, sv.getDtb());
             prst.setBoolean(4, sv.getGioitinh());
             prst.setString(5, sv.getMassv());

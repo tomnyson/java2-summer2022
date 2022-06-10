@@ -15,17 +15,29 @@ public class SinhVien implements Serializable {
 
     private String massv;
     private String ten;
-    private String nganh;
+    private int nganhId;
+    private String tenNganh;
     private double dtb;
     private boolean gioitinh;
 
-    public SinhVien(String massv, String ten, String nganh, double dtb, boolean gioitinh) {
+    public SinhVien(String massv, String ten, int nganh, double dtb, boolean gioitinh) {
         this.massv = massv;
         this.ten = ten;
-        this.nganh = nganh;
+        this.nganhId = nganh;
         this.dtb = dtb;
         this.gioitinh = gioitinh;
     }
+
+    public SinhVien(String massv, String ten, int nganhId, String tenNganh, double dtb, boolean gioitinh) {
+        this.massv = massv;
+        this.ten = ten;
+        this.nganhId = nganhId;
+        this.tenNganh = tenNganh;
+        this.dtb = dtb;
+        this.gioitinh = gioitinh;
+    }
+    
+    
 
     public SinhVien() {
     }
@@ -46,12 +58,12 @@ public class SinhVien implements Serializable {
         this.ten = ten;
     }
 
-    public String getNganh() {
-        return nganh;
+    public int getNganh() {
+        return nganhId;
     }
 
-    public void setNganh(String nganh) {
-        this.nganh = nganh;
+    public void setNganh(int nganh) {
+        this.nganhId = nganh;
     }
 
     public double getDtb() {
@@ -70,9 +82,20 @@ public class SinhVien implements Serializable {
         this.gioitinh = gioitinh;
     }
 
-    @Override
-    public String toString() {
-        return "SinhVien{" + "massv=" + massv + ", ten=" + ten + ", nganh=" + nganh + ", dtb=" + dtb + ", gioitinh=" + gioitinh + '}';
+    public int getNganhId() {
+        return nganhId;
+    }
+
+    public void setNganhId(int nganhId) {
+        this.nganhId = nganhId;
+    }
+
+    public String getTenNganh() {
+        return tenNganh;
+    }
+
+    public void setTenNganh(String tenNganh) {
+        this.tenNganh = tenNganh;
     }
 
   
