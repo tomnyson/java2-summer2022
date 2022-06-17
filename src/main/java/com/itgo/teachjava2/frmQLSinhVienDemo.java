@@ -533,7 +533,7 @@ public class frmQLSinhVienDemo extends javax.swing.JFrame {
             }
 
             // tao sv
-            SinhVien sv = new SinhVien(massv, ten, nganh, dtb, gioiTinh);
+            SinhVien sv = new SinhVien(massv, ten, 1, dtb, gioiTinh);
 
             // add sv vao list
             qlSinhVien.addSinhVien(sv);

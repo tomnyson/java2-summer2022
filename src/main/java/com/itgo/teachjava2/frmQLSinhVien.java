@@ -8,16 +8,27 @@ package com.itgo.teachjava2;
 import dto.Account;
 import dto.Nganh;
 import java.awt.Color;
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showConfirmDialog;
 import javax.swing.border.LineBorder;
@@ -32,7 +43,38 @@ public class frmQLSinhVien extends javax.swing.JFrame {
     /**
      * Creates new form frmQLSinhVien
      */
+    public class ThreadTime extends Thread {
+        JLabel lb;
+
+        public JLabel getLb() {
+            return lb;
+        }
+
+        public void setLb(JLabel lb) {
+            this.lb = lb;
+        }
+
+        public ThreadTime(JLabel lb) {
+            this.lb = lb;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date date = new Date();
+                Thread.sleep(1000);
+                lb.setText(formatter.format(date));
+                }
+            } catch (Exception e) {
+            }
+        }
+        
+    }
+
     public String role;
+    public byte[] photo;
 
     public String getRole() {
         return role;
@@ -48,7 +90,8 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         loadCbNganh();
         LoadSinhVien();
         setLocationRelativeTo(null);
-
+        ThreadTime time = new ThreadTime(lbTime);
+        time.start();
     }
 
     public void loadAuthencation(Account account) {
@@ -81,29 +124,27 @@ public class frmQLSinhVien extends javax.swing.JFrame {
 
     public void LoadSinhVien() {
         try {
-           String[] headerTable = {"MSSV", "Tên", "Ngành", "ĐTB", "Giới tính"};
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(headerTable);
-        ArrayList<SinhVien> listSV = qlSinhVien.loadSinhVien();
-        System.out.println("size"+ listSV.size());
-        if (listSV != null) {
-            for (int i = 0; i < listSV.size(); i++) {
-                model.addRow(new Object[]{
-                    listSV.get(i).getMassv(),
-                    listSV.get(i).getTen(),
-                    listSV.get(i).getTenNganh(),
-                    listSV.get(i).getDtb(),
-                    listSV.get(i).getGioitinh() ? "Nam" : "Nữ"
-                });
+            String[] headerTable = {"MSSV", "Tên", "Ngành", "ĐTB", "Giới tính"};
+            DefaultTableModel model = new DefaultTableModel();
+            model.setColumnIdentifiers(headerTable);
+            ArrayList<SinhVien> listSV = qlSinhVien.loadSinhVien();
+            System.out.println("size" + listSV.size());
+            if (listSV != null) {
+                for (int i = 0; i < listSV.size(); i++) {
+                    model.addRow(new Object[]{
+                        listSV.get(i).getMassv(),
+                        listSV.get(i).getTen(),
+                        listSV.get(i).getTenNganh(),
+                        listSV.get(i).getDtb(),
+                        listSV.get(i).getGioitinh() ? "Nam" : "Nữ"
+                    });
+                }
+                tbSinhVien.setModel(model);
             }
-            tbSinhVien.setModel(model);
-        } 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
 
-        
     }
 
     public void ButtonDelete() {
@@ -138,7 +179,6 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         ckGame = new javax.swing.JCheckBox();
         lbKetQua = new javax.swing.JLabel();
         cbNganh = new javax.swing.JComboBox<>();
-        txtThemNganh = new javax.swing.JTextField();
         btnThemNganh = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbSinhVien = new javax.swing.JTable();
@@ -150,11 +190,19 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         btnSaveFile = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        btnNode = new javax.swing.JButton();
         txtNgaySinh = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         txtadmin = new javax.swing.JLabel();
+        btnXuatDS = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        btnChooseImage = new javax.swing.JButton();
+        lbImage = new javax.swing.JLabel();
+        jFormattedTextField2 = new javax.swing.JFormattedTextField();
+        lbTime = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(204, 204, 204));
@@ -178,10 +226,10 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         getContentPane().add(txtName, new org.netbeans.lib.awtextra.AbsoluteConstraints(186, 180, 300, 40));
 
         jLabel4.setText("Ngành");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 250, -1, -1));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 260, -1, -1));
 
         jLabel5.setText("ĐTB");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 280, 187, 20));
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 280, 60, 20));
         getContentPane().add(txtDTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(186, 280, 300, 34));
 
         jLabel6.setText("giới tính");
@@ -217,7 +265,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         lbKetQua.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         lbKetQua.setForeground(new java.awt.Color(0, 241, 0));
         lbKetQua.setText("Kết Quả");
-        getContentPane().add(lbKetQua, new org.netbeans.lib.awtextra.AbsoluteConstraints(122, 452, -1, 30));
+        getContentPane().add(lbKetQua, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 500, -1, 30));
 
         cbNganh.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CNTT", "Đồ Hoạ", "Kinh Tế", "PR" }));
         cbNganh.setName("cbBox"); // NOI18N
@@ -227,7 +275,6 @@ public class frmQLSinhVien extends javax.swing.JFrame {
             }
         });
         getContentPane().add(cbNganh, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 250, 300, 30));
-        getContentPane().add(txtThemNganh, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 230, 140, 40));
 
         btnThemNganh.setText("thêm Nganh");
         btnThemNganh.addActionListener(new java.awt.event.ActionListener() {
@@ -235,7 +282,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 btnThemNganhActionPerformed(evt);
             }
         });
-        getContentPane().add(btnThemNganh, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 250, -1, -1));
+        getContentPane().add(btnThemNganh, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 370, -1, -1));
 
         tbSinhVien.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -253,9 +300,9 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbSinhVien);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 500, 710, 280));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 590, 910, 190));
 
-        jPanel1.setLayout(new java.awt.GridLayout(1, 0));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         btnThem1.setText("thêm");
         btnThem1.addActionListener(new java.awt.event.ActionListener() {
@@ -263,7 +310,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 btnThem1ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnThem1);
+        jPanel1.add(btnThem1, new java.awt.GridBagConstraints());
 
         btnCapNhat.setText("Cập Nhật");
         btnCapNhat.addActionListener(new java.awt.event.ActionListener() {
@@ -271,7 +318,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 btnCapNhatActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCapNhat);
+        jPanel1.add(btnCapNhat, new java.awt.GridBagConstraints());
 
         ButtonDelete.setText("xoá");
         ButtonDelete.addActionListener(new java.awt.event.ActionListener() {
@@ -279,7 +326,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 ButtonDeleteActionPerformed(evt);
             }
         });
-        jPanel1.add(ButtonDelete);
+        jPanel1.add(ButtonDelete, new java.awt.GridBagConstraints());
 
         btnXepLoai.setBackground(new java.awt.Color(0, 0, 255));
         btnXepLoai.setText("xem sở thích");
@@ -288,7 +335,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 btnXepLoaiActionPerformed(evt);
             }
         });
-        jPanel1.add(btnXepLoai);
+        jPanel1.add(btnXepLoai, new java.awt.GridBagConstraints());
 
         jButton1.setText("Xử lý lỗi");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -296,7 +343,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1);
+        jPanel1.add(jButton1, new java.awt.GridBagConstraints());
 
         btnSaveFile.setText("Save File");
         btnSaveFile.addActionListener(new java.awt.event.ActionListener() {
@@ -304,7 +351,7 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 btnSaveFileActionPerformed(evt);
             }
         });
-        jPanel1.add(btnSaveFile);
+        jPanel1.add(btnSaveFile, new java.awt.GridBagConstraints());
 
         jButton2.setText("sort");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -312,12 +359,20 @@ public class frmQLSinhVien extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2);
+        jPanel1.add(jButton2, new java.awt.GridBagConstraints());
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 410, 700, 50));
+        btnNode.setText("ghi chú");
+        btnNode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNodeActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnNode, new java.awt.GridBagConstraints());
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 410, 800, 50));
 
         txtNgaySinh.setText("dd-MM-YYYY");
-        getContentPane().add(txtNgaySinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 216, 290, 30));
+        getContentPane().add(txtNgaySinh, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 216, 300, 30));
 
         jLabel8.setText("Họ Tên");
         getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(131, 185, -1, -1));
@@ -331,23 +386,49 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         txtadmin.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         getContentPane().add(txtadmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
 
+        btnXuatDS.setText("xuất danh sách");
+        btnXuatDS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXuatDSActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnXuatDS, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 530, -1, 40));
+
+        jButton3.setText("nhập danh sách");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 530, 160, 40));
+
+        jButton5.setText("in danh sách");
+        getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 530, 170, 40));
+
+        btnChooseImage.setText("upload image");
+        btnChooseImage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChooseImageActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnChooseImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 290, 170, -1));
+
+        lbImage.setBackground(new java.awt.Color(204, 204, 204));
+        lbImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbImage.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204), 2));
+        getContentPane().add(lbImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 80, 270, 210));
+
+        jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd-MM-YYYY"))));
+        jFormattedTextField2.setToolTipText("dd-MM-yyyy");
+        getContentPane().add(jFormattedTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 350, 180, -1));
+
+        lbTime.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+        lbTime.setForeground(new java.awt.Color(255, 51, 51));
+        lbTime.setText("Giờ Hệ Thống:");
+        getContentPane().add(lbTime, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnXepLoaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXepLoaiActionPerformed
-        // TODO add your handling code here:
-        boolean hocBai = ckHocBai.isSelected();
-        boolean choiGame = ckGame.isSelected();
-        if (hocBai && choiGame) {
-            lbKetQua.setText("Bạn có sở thích là học bài và thích chơi game ");
-        } else if (hocBai) {
-            lbKetQua.setText("Bạn có sở thích học bài ");
-        } else if (choiGame) {
-            lbKetQua.setText("Bạn có sở thích choi game ");
-        } else {
-            lbKetQua.setText("chưa chọn ");
-        }
-    }//GEN-LAST:event_btnXepLoaiActionPerformed
 
     private void rbNamStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_rbNamStateChanged
         // TODO add your handling code here:
@@ -368,48 +449,15 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         // 
     }//GEN-LAST:event_cbNganhActionPerformed
 
-    private void btnThem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThem1ActionPerformed
-        // TODO add your handling code here:
-        if (!txtMSSV.getText().equals("")
-                || !txtName.getText().equals("")) {
-            String massv = txtMSSV.getText();
-            String ten = txtName.getText();
-//            String nganh = (String) cbNganh.getSelectedItem();
-            Nganh nganh = (Nganh) cbNganh.getSelectedItem();
-            System.out.println("id" + nganh.getId());
-            double dtb = Double.parseDouble(txtDTB.getText());
-            boolean gioiTinh = false; // false nữ
-//            boolean gioiTinh = rbNam.isSelected() ? true : false;
-            if (rbNam.isSelected()) {
-                gioiTinh = true; // nam
-            }
-
-            // tao sv
-            SinhVien sv = new SinhVien(massv, ten, nganh.getId(), dtb, gioiTinh);
-
-            // add sv vao list
-            boolean kt = qlSinhVien.addSinhVien(sv);
-            if (kt) {
-                LoadSinhVien();
-                JOptionPane.showMessageDialog(null, "Thêm thành ");
-            }
-            // load lai table
-
-        } else {
-            JOptionPane.showMessageDialog(null, "Dữ liệu không để trống");
-        }
-
-    }//GEN-LAST:event_btnThem1ActionPerformed
-
     private void btnThemNganhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemNganhActionPerformed
         // TODO add your handling code here:
-        String nganh = txtThemNganh.getText();
-        if (nganh.equals("")) {
-            JOptionPane.showMessageDialog(null, "nhập tên ngành cần thêm");
-        } else {
-            cbNganh.addItem(nganh);
-            System.err.println("số phần tửL" + cbNganh.getItemCount());
-        }
+//        String nganh = txtThemNganh.getText();
+//        if (nganh.equals("")) {
+//            JOptionPane.showMessageDialog(null, "nhập tên ngành cần thêm");
+//        } else {
+//            cbNganh.addItem(nganh);
+//            System.err.println("số phần tửL" + cbNganh.getItemCount());
+//        }
     }//GEN-LAST:event_btnThemNganhActionPerformed
 
     private void tbSinhVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbSinhVienMouseClicked
@@ -422,6 +470,13 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         String dtb = tbSinhVien.getValueAt(indexRow, 3).toString();
         String nganh = tbSinhVien.getValueAt(indexRow, 2).toString();
         String gioiTinh = tbSinhVien.getValueAt(indexRow, 4).toString();
+        SinhVien sv = qlSinhVien.getListSinhVien().get(indexRow);
+        photo = sv.getAnh();
+        ImageIcon imageIcon = new ImageIcon(new ImageIcon(photo).getImage()
+                .getScaledInstance(
+                        lbImage.getWidth(),
+                        lbImage.getHeight(), Image.SCALE_DEFAULT));
+        lbImage.setIcon(imageIcon);
         if (gioiTinh.equals("Nữ")) {
             rbNu.setSelected(true);
             rbNam.setSelected(false);
@@ -437,74 +492,103 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         txtDTB.setText(dtb);
         lbKetQua.setText(mssv);
     }//GEN-LAST:event_tbSinhVienMouseClicked
-
-    private void ButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonDeleteActionPerformed
-        // TODO add your handling code here:null
-        boolean kq = qlSinhVien.delete(lbKetQua.getText());
-        if (kq) {
-            LoadSinhVien();
-            JOptionPane.showMessageDialog(this, "Xoá thành công !!");
-        }
-
-    }//GEN-LAST:event_ButtonDeleteActionPerformed
-
-    private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
-        // TODO add your handling code here:
-
-        int indexRow = tbSinhVien.getSelectedRow();
-        ArrayList<SinhVien> listSV = qlSinhVien.loadSinhVien();
-        listSV.get(indexRow).setMassv(txtMSSV.getText());
-        listSV.get(indexRow).setTen(txtName.getText());
-        listSV.get(indexRow).setDtb(Double.parseDouble(txtDTB.getText()));
-        listSV.get(indexRow).setGioitinh((rbNam.isSelected()) ? true : false);
-        Nganh nganh = (Nganh) cbNganh.getSelectedItem();
-        listSV.get(indexRow).setNganh(nganh.getId());
-
-        boolean kt = qlSinhVien.capNhatSinhVien(listSV.get(indexRow));
-        if (kt) {
-            LoadSinhVien();
-            JOptionPane.showMessageDialog(null, "cập nhật thành  công");
-            LoadSinhVien();
-        }
-
-
-    }//GEN-LAST:event_btnCapNhatActionPerformed
     public void resetField() {
         txtNgaySinh.setBackground(Color.white);
         txtNgaySinh.setBorder(null);
     }
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnXuatDSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatDSActionPerformed
         // TODO add your handling code here:
         try {
-//            /**
-//             * block code có thể phát sinh ra lỗi
-//             */
-//            int a = 5;
-//            int b = 0;
-//            System.err.println("ket qua" + a / b);
-            this.resetField();
-            double dtb = Double.parseDouble(txtDTB.getText());
-            try {
-                SimpleDateFormat formatDate = new SimpleDateFormat();
-                formatDate.applyPattern("dd-MM-yyyy");
-                Date ngaysinh = formatDate.parse(txtNgaySinh.getText());
+            JFileChooser fileChooser = new JFileChooser();
+            int trangThai = fileChooser.showSaveDialog(null);
+            if (trangThai == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                if (file == null) {
+                    return;
+                }
+                if (!file.getName().toLowerCase().endsWith(".txt")) {
+                    file = new File(file.getParent(), file.getName() + ".txt");
+                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                txtNgaySinh.setBackground(Color.red);
-                txtNgaySinh.setBorder(new LineBorder(Color.YELLOW, 1));
-                JOptionPane.showMessageDialog(this, "ngày sinh không đúng định dạnh");
+                FileOutputStream out = new FileOutputStream(file.getAbsoluteFile());
+                ObjectOutputStream objOut = new ObjectOutputStream(out);
+                List<SinhVien> list = qlSinhVien.loadSinhVien();
+                objOut.writeObject(list);
+                objOut.close();
+                JOptionPane.showMessageDialog(null, "save danh sách sv");
             }
-
         } catch (Exception e) {
-            txtDTB.setBackground(Color.red);
-            txtDTB.setBorder(new LineBorder(Color.YELLOW, 1));
-            JOptionPane.showMessageDialog(this, "điểm tb không phải là số");
-            throw e;
-        } finally {
-            System.err.println("do somthing");
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+
+    }//GEN-LAST:event_btnXuatDSActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            int trangThai = fileChooser.showOpenDialog(null);
+            if (trangThai == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                FileInputStream in = new FileInputStream(file.getAbsoluteFile());
+                ObjectInputStream inObj = new ObjectInputStream(in);
+                List<SinhVien> list = (List<SinhVien>) inObj.readObject();
+                inObj.close();
+                for (SinhVien sv : list) {
+                    System.out.print(sv.toString());
+                }
+                JOptionPane.showMessageDialog(null, "read danh sách success");
+            }
+        } catch (Exception e) {
+        }
+
+
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void btnChooseImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseImageActionPerformed
+        // TODO add your handling code here:
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            int trangThai = fileChooser.showOpenDialog(null);
+            if (trangThai == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                ImageIcon imageIcon = new ImageIcon(new ImageIcon(file.toString())
+                        .getImage().getScaledInstance(
+                                lbImage.getWidth(),
+                                lbImage.getHeight(),
+                                Image.SCALE_DEFAULT));
+                lbImage.setIcon(imageIcon);
+                FileInputStream fis = new FileInputStream(file);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];
+                for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                    bos.write(buf, 0, readNum);
+                }
+                photo = bos.toByteArray();
+            }
+        } catch (Exception e) {
+        }
+
+
+    }//GEN-LAST:event_btnChooseImageActionPerformed
+
+    private void btnNodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNodeActionPerformed
+        // TODO add your handling code here:
+
+        frmNote note = new frmNote();
+        //        this.setVisible(false);
+        note.setVisible(true);
+    }//GEN-LAST:event_btnNodeActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        Collections.sort(qlSinhVien.getListSinhVien(), new Comparator<SinhVien>() {
+            @Override
+            public int compare(SinhVien c1, SinhVien c2) {
+                return Double.compare(c2.getDtb(), c1.getDtb());
+            }
+        });
+        LoadSinhVien();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveFileActionPerformed
         // TODO add your handling code here:
@@ -530,19 +614,117 @@ public class frmQLSinhVien extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "save ko thành công");
         }
-
     }//GEN-LAST:event_btnSaveFileActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        Collections.sort(qlSinhVien.getListSinhVien(), new Comparator<SinhVien>() {
-            @Override
-            public int compare(SinhVien c1, SinhVien c2) {
-                return Double.compare(c2.getDtb(), c1.getDtb());
+        try {
+            //            /**
+            //             * block code có thể phát sinh ra lỗi
+            //             */
+            //            int a = 5;
+            //            int b = 0;
+            //            System.err.println("ket qua" + a / b);
+            this.resetField();
+            double dtb = Double.parseDouble(txtDTB.getText());
+            try {
+                SimpleDateFormat formatDate = new SimpleDateFormat();
+                formatDate.applyPattern("dd-MM-yyyy");
+                Date ngaysinh = formatDate.parse(txtNgaySinh.getText());
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                txtNgaySinh.setBackground(Color.red);
+                txtNgaySinh.setBorder(new LineBorder(Color.YELLOW, 1));
+                JOptionPane.showMessageDialog(this, "ngày sinh không đúng định dạnh");
             }
-        });
-        LoadSinhVien();
-    }//GEN-LAST:event_jButton2ActionPerformed
+
+        } catch (Exception e) {
+            txtDTB.setBackground(Color.red);
+            txtDTB.setBorder(new LineBorder(Color.YELLOW, 1));
+            JOptionPane.showMessageDialog(this, "điểm tb không phải là số");
+            throw e;
+        } finally {
+            System.err.println("do somthing");
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnXepLoaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXepLoaiActionPerformed
+        // TODO add your handling code here:
+        boolean hocBai = ckHocBai.isSelected();
+        boolean choiGame = ckGame.isSelected();
+        if (hocBai && choiGame) {
+            lbKetQua.setText("Bạn có sở thích là học bài và thích chơi game ");
+        } else if (hocBai) {
+            lbKetQua.setText("Bạn có sở thích học bài ");
+        } else if (choiGame) {
+            lbKetQua.setText("Bạn có sở thích choi game ");
+        } else {
+            lbKetQua.setText("chưa chọn ");
+        }
+    }//GEN-LAST:event_btnXepLoaiActionPerformed
+
+    private void ButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonDeleteActionPerformed
+        // TODO add your handling code here:null
+        boolean kq = qlSinhVien.delete(lbKetQua.getText());
+        if (kq) {
+            LoadSinhVien();
+            JOptionPane.showMessageDialog(this, "Xoá thành công !!");
+        }
+    }//GEN-LAST:event_ButtonDeleteActionPerformed
+
+    private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
+        // TODO add your handling code here:
+
+        int indexRow = tbSinhVien.getSelectedRow();
+        ArrayList<SinhVien> listSV = qlSinhVien.loadSinhVien();
+        listSV.get(indexRow).setMassv(txtMSSV.getText());
+        listSV.get(indexRow).setTen(txtName.getText());
+        listSV.get(indexRow).setDtb(Double.parseDouble(txtDTB.getText()));
+        listSV.get(indexRow).setGioitinh((rbNam.isSelected()) ? true : false);
+        Nganh nganh = (Nganh) cbNganh.getSelectedItem();
+        listSV.get(indexRow).setNganh(nganh.getId());
+
+        boolean kt = qlSinhVien.capNhatSinhVien(listSV.get(indexRow));
+        if (kt) {
+            LoadSinhVien();
+            JOptionPane.showMessageDialog(null, "cập nhật thành  công");
+            LoadSinhVien();
+        }
+
+    }//GEN-LAST:event_btnCapNhatActionPerformed
+
+    private void btnThem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThem1ActionPerformed
+        // TODO add your handling code here:
+        if (!txtMSSV.getText().equals("")
+                || !txtName.getText().equals("")) {
+            String massv = txtMSSV.getText();
+            String ten = txtName.getText();
+            //            String nganh = (String) cbNganh.getSelectedItem();
+            Nganh nganh = (Nganh) cbNganh.getSelectedItem();
+            System.out.println("id" + nganh.getId());
+            double dtb = Double.parseDouble(txtDTB.getText());
+            boolean gioiTinh = false; // false nữ
+            //            boolean gioiTinh = rbNam.isSelected() ? true : false;
+            if (rbNam.isSelected()) {
+                gioiTinh = true; // nam
+            }
+
+            // tao sv
+            SinhVien sv = new SinhVien(massv, ten, nganh.getId(), nganh.getName(), dtb, gioiTinh, photo);
+
+            // add sv vao list
+            boolean kt = qlSinhVien.addSinhVien(sv);
+            if (kt) {
+                LoadSinhVien();
+                JOptionPane.showMessageDialog(null, "Thêm thành ");
+            }
+            // load lai table
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Dữ liệu không để trống");
+        }
+    }//GEN-LAST:event_btnThem1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -582,16 +764,22 @@ public class frmQLSinhVien extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonDelete;
     private javax.swing.JButton btnCapNhat;
+    private javax.swing.JButton btnChooseImage;
+    private javax.swing.JButton btnNode;
     private javax.swing.JButton btnSaveFile;
     private javax.swing.JButton btnThem1;
     private javax.swing.JButton btnThemNganh;
     private javax.swing.JButton btnXepLoai;
+    private javax.swing.JButton btnXuatDS;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> cbNganh;
     private javax.swing.JCheckBox ckGame;
     private javax.swing.JCheckBox ckHocBai;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -604,7 +792,9 @@ public class frmQLSinhVien extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbImage;
     private javax.swing.JLabel lbKetQua;
+    private javax.swing.JLabel lbTime;
     private javax.swing.JRadioButton rbNam;
     private javax.swing.JRadioButton rbNu;
     private javax.swing.JTable tbSinhVien;
@@ -612,7 +802,6 @@ public class frmQLSinhVien extends javax.swing.JFrame {
     private javax.swing.JTextField txtMSSV;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtNgaySinh;
-    private javax.swing.JTextField txtThemNganh;
     public javax.swing.JLabel txtadmin;
     // End of variables declaration//GEN-END:variables
 }

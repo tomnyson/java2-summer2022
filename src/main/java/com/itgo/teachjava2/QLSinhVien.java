@@ -7,12 +7,10 @@ package com.itgo.teachjava2;
 
 import static com.itgo.teachjava2.QLSinhVienDB.getSqlConnection;
 import dto.Nganh;
-import java.awt.List;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -21,12 +19,12 @@ import java.util.ArrayList;
  */
 public class QLSinhVien {
 
-    private static String USER_NAME = "dev";
-    private static String PASSWORD = "dev";
+    private static String USER_NAME = "root";
+    private static String PASSWORD = "";
     private static String DATABASE = "teachJava2";
 //    private static String DATABASE = "qlSinhVien";
     //jdbc:sqlserver://localhost:1433;databaseName=DynamicsAx2009 -> db name
-    private static String DB_URL = "jdbc:mysql://192.168.64.2:3306/" + DATABASE; // localhost:
+    private static String DB_URL = "jdbc:mysql://localhost:3306/" + DATABASE; // localhost:
 //    private static String DB_URL = "jdbc:sqlserver://localhost:1433; databaseName=" + DATABASE+""; // localhost:
 
     private ArrayList<SinhVien> listSinhVien;
@@ -82,7 +80,10 @@ public class QLSinhVien {
                 sv.setTenNganh(rst.getString("name"));
                 sv.setDtb(rst.getDouble("diemTb"));
                 sv.setGioitinh(rst.getBoolean("gioitinh"));
+                // lấy ảnh từ db
+                sv.setAnh(rst.getBytes("anh"));
                 list.add(sv);
+                listSinhVien.add(sv);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,14 +125,15 @@ public class QLSinhVien {
     public boolean addSinhVien(SinhVien sv) {
         try {
             Connection connect = getConnection();
-            String sql = "insert into sinhviens(masv, tensv, nganhId, diemTb, gioitinh)"
-                    + "values(?, ?, ?, ?, ?)";
+            String sql = "insert into sinhviens(masv, tensv, nganhId, diemTb, gioitinh, anh)"
+                    + "values(?, ?, ?, ?, ?, ?)";
             PreparedStatement stm = connect.prepareStatement(sql);
             stm.setString(1, sv.getMassv());
             stm.setString(2, sv.getTen());
             stm.setInt(3, sv.getNganh());
             stm.setDouble(4, sv.getDtb());
             stm.setBoolean(5, sv.getGioitinh());
+            stm.setBytes(6, sv.getAnh());
             int ketqua = stm.executeUpdate();
             if (ketqua > 0) {
                 return true;
@@ -154,6 +156,7 @@ public class QLSinhVien {
             prst.setDouble(3, sv.getDtb());
             prst.setBoolean(4, sv.getGioitinh());
             prst.setString(5, sv.getMassv());
+            prst.setBytes(6, sv.getAnh());
             int result = prst.executeUpdate();
             if (result > 0) {
                 return true;

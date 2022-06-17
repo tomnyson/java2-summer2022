@@ -312,9 +312,6 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnXepLoai">
       <Properties>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="/Users/tomnyson/NetBeansProjects/teachjava2/src/main/java/com/itgo/teachjava2/icon/them.png"/>
-        </Property>
         <Property name="text" type="java.lang.String" value="th&#xea;m"/>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>

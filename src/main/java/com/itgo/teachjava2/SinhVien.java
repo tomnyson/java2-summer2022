@@ -19,6 +19,7 @@ public class SinhVien implements Serializable {
     private String tenNganh;
     private double dtb;
     private boolean gioitinh;
+    private byte[] anh;
 
     public SinhVien(String massv, String ten, int nganh, double dtb, boolean gioitinh) {
         this.massv = massv;
@@ -27,6 +28,19 @@ public class SinhVien implements Serializable {
         this.dtb = dtb;
         this.gioitinh = gioitinh;
     }
+
+    public SinhVien(String massv, String ten, int nganhId, String tenNganh,
+            double dtb, boolean gioitinh, byte[] anh) {
+        this.massv = massv;
+        this.ten = ten;
+        this.nganhId = nganhId;
+        this.tenNganh = tenNganh;
+        this.dtb = dtb;
+        this.gioitinh = gioitinh;
+        this.anh = anh;
+    }
+    
+    
 
     public SinhVien(String massv, String ten, int nganhId, String tenNganh, double dtb, boolean gioitinh) {
         this.massv = massv;
@@ -96,6 +110,14 @@ public class SinhVien implements Serializable {
 
     public void setTenNganh(String tenNganh) {
         this.tenNganh = tenNganh;
+    }
+
+    public byte[] getAnh() {
+        return anh;
+    }
+
+    public void setAnh(byte[] anh) {
+        this.anh = anh;
     }
 
   

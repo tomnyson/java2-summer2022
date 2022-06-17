@@ -75,7 +75,7 @@ public class QLSinhVienDB {
                     SinhVien sv = new SinhVien();
                     sv.setMassv(result.getString("masv"));
                     sv.setTen(result.getString("tensv"));
-                    sv.setNganh(result.getString("nganh"));
+                    sv.setNganh(result.getInt("nganh"));
                     sv.setDtb(result.getFloat("diemTb"));
                     sv.setGioitinh(result.getBoolean("gioitinh"));
                     catList.add(sv);
@@ -119,7 +119,7 @@ public class QLSinhVienDB {
             PreparedStatement prst = connect.prepareStatement(sql);
             prst.setString(1, sv.getMassv());
             prst.setString(2, sv.getTen());
-            prst.setString(3, sv.getNganh());
+            prst.setInt(3, sv.getNganh());
             prst.setDouble(4, sv.getDtb());
             prst.setBoolean(5, sv.getGioitinh());
             int result = prst.executeUpdate();
@@ -140,7 +140,7 @@ public class QLSinhVienDB {
                     + " diemtb=?, gioitinh=? where masv=? ";
             PreparedStatement prst = connect.prepareStatement(sql);
             prst.setString(1, sv.getTen());
-            prst.setString(2, sv.getNganh());
+            prst.setInt(2, sv.getNganh());
             prst.setDouble(3, sv.getDtb());
             prst.setBoolean(4, sv.getGioitinh());
             prst.setString(5, sv.getMassv());
